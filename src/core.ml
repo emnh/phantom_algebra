@@ -180,7 +180,9 @@ let slice (t: (_,_) t) (n:(_ index)) =
       { rank=2; data}
   | n -> unexpected [n]
 
+(*
 let (.%[]) x = slice x
+*)
 
 let get (t: (_,_) t) (n:(_ index)) = match t.rank with
   | 0 -> t.data.(0)
@@ -188,16 +190,23 @@ let get (t: (_,_) t) (n:(_ index)) = match t.rank with
   | 2 -> t.data.( (n lsr 2) land 0x3 + mat_dim t * (n land 0x3) )
   | n -> unexpected [n]
 
+  (*
 let (.%()) x = get x
+*)
 
-
-
+(*
 let (.%{}) x = swizzle x
+*)
 
 let map f x = { x with data = Array.map f x.data }
-let map2 f x y = { x with data = Array.map2 f x.data y.data }
-let smap f x y = map (f x.data.(0)) y
 
+let amap2 f x y =
+  Array.init (min (Array.length x) (Array.length y))
+    (fun n  -> f (x.(n)) (y.(n)))
+
+let map2 f x y = { x with data = amap2 f x.data y.data }
+
+let smap f x y = map (f x.data.(0)) y
 
 let cross {data=a;_} {data=b;_} =
   if Array.length a = 2 then
@@ -270,7 +279,7 @@ let (+) a b =
     smap (+.) a b
   else if b.rank = 0 then
     smap (+.) b a
-  else { a with data = Array.map2 (+.) a.data b.data }
+  else { a with data = amap2 (+.) a.data b.data }
 
 let (-) a b =
   if a.rank = 0 then
@@ -279,7 +288,7 @@ let (-) a b =
     { a with
       data = Array.init (Array.length b.data)
           (fun n -> b.data.(n) -. a.data.(0))}
-  else { a with data = Array.map2 (+.) a.data b.data }
+  else { a with data = amap2 (+.) a.data b.data }
 
 
 let floor a = int_of_float ( a.data.(0) )

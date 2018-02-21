@@ -143,12 +143,16 @@ module type Indexing = sig
       [m.%[x]] is the first row vector of the matrix [m] *)
   val slice: ('dim1,('rank1,'rank2,'rank3, 'dim1,'dim3,'len,_) superindexing) t
     -> ('dim1, 'len, 'rank2, 'group) index -> ('dim3,'rank3) t
+    (*
   val (.%[]): ('dim1,('rank1,'rank2,'rank3, 'dim1,'dim3,'len,_) superindexing) t
     -> ('dim1, 'len, 'rank2, 'group) index -> ('dim3,'rank3) t
+    *)
 
   (** [t.%(x)] returns the value of the tensor at index [x] *)
   val get: ('dim,'rank) t -> ('dim,_ one, 'rank, 'group) index -> k
+  (*
   val (.%()): ('dim,'rank) t -> ('dim, _ one,'rank,'group) index -> k
+  *)
 end
 
 module type S = sig
